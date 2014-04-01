@@ -1,0 +1,32 @@
+ - all lights on
+ - all lights off
+ 
+ - group lights on
+ - group lights off
+ 
+ - group status change
+ 
+ - individual status change
+ 
+ - get light status
+ - get overall status
+ 
+ - create group
+ - manage group
+ - delete group
+ 
+ 
+/ACTION/WHICH/VALUE
+
+/power/all/off
+/power/all/on
+
+/power/living-room/off
+/power/living-room/on
+
+
+/group/living-room/power/on
+/group/living-room/off
+
+ 
+/power/off/
