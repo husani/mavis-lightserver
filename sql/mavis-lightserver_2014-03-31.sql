@@ -7,7 +7,7 @@
 #
 # Host: localhost (MySQL 5.5.29)
 # Database: mavis-lightserver
-# Generation Time: 2014-04-01 00:13:51 +0000
+# Generation Time: 2014-04-01 02:37:09 +0000
 # ************************************************************
 
 
@@ -27,7 +27,6 @@ DROP TABLE IF EXISTS `group`;
 
 CREATE TABLE `group` (
   `group_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `hue_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `desc` text,
   PRIMARY KEY (`group_id`)
@@ -60,8 +59,8 @@ CREATE TABLE `light_group` (
   `group_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`light_id`),
   KEY `group_id` (`group_id`),
-  CONSTRAINT `light_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `group` (`group_id`),
-  CONSTRAINT `light_group_ibfk_1` FOREIGN KEY (`light_id`) REFERENCES `light` (`light_id`)
+  CONSTRAINT `light_group_ibfk_4` FOREIGN KEY (`group_id`) REFERENCES `group` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `light_group_ibfk_3` FOREIGN KEY (`light_id`) REFERENCES `light` (`light_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
