@@ -24,9 +24,42 @@
 /power/living-room/off
 /power/living-room/on
 
+/scene/living-room/15
+/scene/office/12
 
-/group/living-room/power/on
-/group/living-room/off
+/light/light_id/SETTINGS
 
+if number, light_id
+if not number, it's a group -- get light ids from DB based on group name
+
+
+
+
+light
+ - light_id
+ - light_name
  
-/power/off/
+group
+ - group_id
+ - group_name
+ 
+light_group
+ - light_id
+ - group_id
+ 
+scene
+ - scene_id
+ - name
+ 
+scene_group
+ - scene_id
+ - group_id
+ 
+scene_light
+ - scene_id
+ - light_id
+ - on
+ - hue
+ - sat
+ - xy
+ - colormode
