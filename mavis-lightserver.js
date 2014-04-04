@@ -41,7 +41,7 @@ var route = router();
 route.get('/power/{light_or_group}/{action}', _power);
 function _power(req, res){
 	//enable cross-domain
-	_cors();
+	_cors(res);
 	//convert light_id to hue_id OR group name to light_ids
 	if(IsNumeric(req.params['light_or_group'])){
 		LightsModel.getLightByLightId(req.params['light_or_group'], function(err, results){
