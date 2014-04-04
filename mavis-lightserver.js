@@ -40,6 +40,8 @@ var route = router();
 //POWER
 route.get('/power/{light_or_group}/{action}', _power);
 function _power(req, res){
+	//enable cross-domain
+	_cors();
 	//convert light_id to hue_id OR group name to light_ids
 	if(IsNumeric(req.params['light_or_group'])){
 		LightsModel.getLightByLightId(req.params['light_or_group'], function(err, results){
@@ -55,7 +57,7 @@ function _power(req, res){
 			if((err) || (results.length < 1)){
 				logger.warn("Unable to find group in database.", {light_or_group: req.params['light_or_group']});
 			} else {
-				for(i = 0; i < light_ids.length; i++){
+				for(i = 0; i < results.length; i++){
 					//change power settings
 					MavisHueAPI.power(results[i].hue_id, req.params['action']);
 				}
@@ -68,6 +70,8 @@ function _power(req, res){
 //SCENE
 route.get('/scene/{group_id}/{scene_id}', _scene);
 function _scene(req, res){
+	//enable cross-domain
+	_cors(res);
 	ScenesModel.getSettingsByGroupIdAndSceneId(req.params['group_id'], req.params['scene_id'], function(err, results){
 		if((err) || (results.length < 1)){
 			logger.warn("Unable to find either scene or group.", {scene_id: req.params['scene_id'], group_id: req.params['group_id']});
@@ -81,6 +85,8 @@ function _scene(req, res){
 //INDIVIDUAL LIGHT
 route.post('/light/', _light);
 function _light(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -101,9 +107,23 @@ function _light(req, res){
 
 //SYSTEM MANAGEMENT
 
+//get overall status
+route.get('/manage/setup/get-system-info', _manage_status);
+function _manage_status(req, res){
+	//enable cross-domain
+	_cors(res);
+	var response = {};
+	response.status = 1;
+	response.group_id = "whaty up";
+	res.write(JSON.stringify(response));		
+	res.end();
+}
+
 //add all lights to db, create first group
 route.get('/manage/setup/set-defaults/', _manage_setdefaults);
 function _manage_setdefaults(req, res){
+	//enable cross-domain
+	_cors(res);
 	//create a default group
 	GroupsModel.addGroup("Apartment", "All lights in entire apartment", function(err, group_id){
 		if((err) || (!group_id)){
@@ -146,6 +166,8 @@ function _manage_setdefaults(req, res){
 //create new group
 route.post('/manage/group/add/', _manage_group_add);
 function _manage_group_add(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -170,6 +192,8 @@ function _manage_group_add(req, res){
 //edit group
 route.post('/manage/group/edit/', _manage_group_edit);
 function _manage_group_edit(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -193,6 +217,8 @@ function _manage_group_edit(req, res){
 //delete group
 route.post('/manage/group/delete/', _manage_group_delete);
 function _manage_group_delete(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -216,6 +242,8 @@ function _manage_group_delete(req, res){
 //assign light to group
 route.post('/manage/group/assignlight/', _manage_group_assignlight);
 function _manage_group_assignlight(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -239,6 +267,8 @@ function _manage_group_assignlight(req, res){
 //remove light from group
 route.post('/manage/group/deassignlight/', _manage_group_deassignlight);
 function _manage_group_deassignlight(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -265,6 +295,8 @@ function _manage_group_deassignlight(req, res){
 //edit light
 route.post('/manage/light/edit/', _manage_light_edit);
 function _manage_light_edit(req, res){
+	//enable cross-domain
+	_cors(res);
 	var body = "";
 	req.on('data', function(data){
 		body += data;
@@ -294,6 +326,19 @@ function _manage_light_edit(req, res){
 	});
 }
 
+
+/**
+ * We need all incoming requests to work -- so let's just open this thing up. THIS MAY NOT WORK FOR YOUR SETUP.
+ */
+function _cors(res){
+    var headers = {};
+    headers["Access-Control-Allow-Origin"] = "*";
+    headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS";
+    headers["Access-Control-Allow-Credentials"] = true;
+    headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+    headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
+    res.writeHead(200, headers);    
+}
 
 http.createServer(route).listen(Config.http.port); // start the server on port 8080
 
